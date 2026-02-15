@@ -416,9 +416,30 @@ graph TD
 | **GitHub** | Gives Copilot access to your GitHub repositories, issues, pull requests, and code for context-aware development assistance. |
 | **Playwright** | Allows Copilot to automate browser interactions for testing and web scraping through structured accessibility data. |
 
-### Step 4.1: Create the MCP Configuration File
+### Step 4.1: Install Microsoft Learn MCP Server (Remote Server)
 
-In your project workspace (you'll create the project in Lab 6, but set this up at the user level now), open VS Code settings:
+The Microsoft Learn MCP Server is a **remote HTTP server** hosted by Microsoft, not an npm package. Install it via VS Code Extensions:
+
+1. Press `Ctrl+Shift+X` to open Extensions
+2. Search for **"@mcp learn"**
+3. Install the **"Microsoft Learn"** MCP extension
+4. Restart VS Code
+
+**Alternative (if using GitHub Copilot CLI)**:
+```bash
+/plugin install microsoftdocs/mcp
+```
+
+> **What it does**: The Microsoft Learn MCP Server connects to `https://learn.microsoft.com/api/mcp` and provides three tools to Copilot:
+> - `microsoft_docs_search` — Search Microsoft documentation
+> - `microsoft_docs_fetch` — Fetch complete documentation articles
+> - `microsoft_code_sample_search` — Find official Microsoft code samples
+>
+> **No authentication required** — This is a free, public service.
+
+### Step 4.2: Configure Other MCP Servers
+
+For the remaining MCP servers (Context7, Azure, GitHub, Playwright), open VS Code settings:
 
 Press `Ctrl+Shift+P` and type **Preferences: Open User Settings (JSON)**.
 
@@ -428,10 +449,6 @@ Add the following MCP configuration block inside the JSON object:
 {
   "mcp": {
     "servers": {
-      "microsoft-learn": {
-        "command": "npx",
-        "args": ["-y", "@anthropic-ai/microsoft-learn-mcp@latest"]
-      },
       "context7": {
         "command": "npx",
         "args": ["-y", "@upstash/context7-mcp"]
@@ -464,7 +481,9 @@ Add the following MCP configuration block inside the JSON object:
 }
 ```
 
-### Step 4.2: Generate a GitHub Personal Access Token
+> **Note**: Microsoft Learn MCP is installed separately via Extensions (Step 4.1) because it's a remote server, not a local npm package like the others.
+
+### Step 4.3: Generate a GitHub Personal Access Token
 
 The GitHub MCP server needs a token to access your repositories:
 
@@ -478,7 +497,7 @@ The GitHub MCP server needs a token to access your repositories:
 
 When Copilot first uses the GitHub MCP server, VS Code will prompt you to paste this token.
 
-### Step 4.3: Verify MCP Servers
+### Step 4.4: Verify MCP Servers
 
 Open the Command Palette (`Ctrl+Shift+P`) and run:
 
@@ -492,6 +511,36 @@ Alternatively, you can view installed MCP servers in the Extensions panel:
 
 ![MCP servers shown in VS Code Extensions panel](images/vscode-extensions-panel.png)
 *Scroll to the bottom of the Extensions panel to see the "MCP SERVERS - INSTALLED" section showing Azure MCP Server and Context7*
+
+### Step 4.5: Configure Microsoft Learn MCP Instructions (Recommended)
+
+To ensure Copilot uses the Microsoft Learn MCP tools effectively, add custom instructions:
+
+1. Open Copilot Chat (`Ctrl+Shift+I`)
+2. Switch to **Agent Mode** (dropdown at top of chat)
+3. Click the **settings gear icon** → **Instructions**
+4. Select **User** scope (applies to all projects)
+5. Add the following:
+
+```markdown
+---
+applyTo: '**'
+---
+
+## Querying Microsoft Documentation
+
+You have access to MCP tools called `microsoft_docs_search`, `microsoft_docs_fetch`, and `microsoft_code_sample_search` that provide access to Microsoft's latest official documentation and code samples.
+
+When handling questions about Microsoft technologies (C#, F#, ASP.NET Core, Azure, TypeScript, .NET, Entity Framework, etc.), use these tools to:
+- Search for up-to-date documentation
+- Fetch complete articles with detailed examples
+- Find official Microsoft code samples
+- Verify API signatures and best practices
+
+Always prefer Microsoft Learn content for Microsoft-specific questions, as it may be more detailed or newer than your training data.
+```
+
+This instructs Copilot to automatically query Microsoft Learn when relevant, giving you fresher and more accurate responses for Microsoft technologies.
 
 ### Checkpoint
 
