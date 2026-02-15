@@ -236,6 +236,56 @@ Think of MCP servers as Copilot's "tools":
 - Without MCP: Copilot only knows what you type and what it was trained on
 - With MCP: Copilot can fetch live docs, manage Azure resources, read your GitHub repos, etc.
 
+### Troubleshooting Errors with Copilot Chat
+
+When you encounter build errors, TypeScript errors, or runtime issues, GitHub Copilot Chat can help you fix them quickly. The workflow is simple:
+
+**The Error Resolution Workflow**:
+
+```mermaid
+graph LR
+    ERROR[See Error in Terminal] --> COPY[Copy Error Text]
+    COPY --> PASTE[Paste into Copilot Chat]
+    PASTE --> AI[Copilot Analyzes Error]
+    AI --> FIX[Copilot Suggests Fix]
+    FIX --> REVIEW[Review Changes]
+    REVIEW --> ACCEPT{Keep or Undo?}
+    ACCEPT -->|Keep| DONE[Test Again]
+    ACCEPT -->|Undo| ITERATE[Refine Request]
+    ITERATE --> PASTE
+
+    style ERROR fill:#E74C3C,color:#fff
+    style AI fill:#6e40c9,color:#fff
+    style DONE fill:#2ECC71,color:#fff
+```
+
+**Step-by-Step**:
+
+1. **Run your build** — Execute `npm run build` or `npm run dev` in the terminal
+2. **Error appears** — See red error messages with file paths and line numbers
+3. **Copy the error** — Select and copy the error text (Ctrl+C)
+4. **Open Copilot Chat** — Press `Ctrl+Shift+I` to open the chat panel
+5. **Paste the error** — Just paste it (Ctrl+V) and press Enter — no need to add extra context
+6. **Copilot analyzes** — Copilot reads your project files and identifies the issue
+7. **Review the fix** — Copilot shows suggested changes with "Keep" and "Undo" buttons
+8. **Accept or reject** — Click "Keep" to apply changes, or "Undo" to try a different approach
+
+![Terminal showing TypeScript build errors](images/typescript-build-errors.png)
+*Example: Terminal showing build errors that can be copied and pasted into Copilot Chat*
+
+![Copilot code review interface with Keep and Undo buttons](images/copilot-review-interface.png)
+*Copilot shows proposed changes with clear Keep/Undo options before applying them*
+
+**Important**: Copilot has full context of your project, so you don't need to explain the error or provide additional details. Just paste the error text directly, and Copilot will understand it in the context of your codebase.
+
+**Common Errors Copilot Can Fix**:
+- TypeScript type errors ("Type 'string' is not assignable to type 'number'")
+- Missing imports ("Cannot find module 'react'")
+- Build configuration issues (Vite, Webpack, tsconfig problems)
+- Syntax errors (missing brackets, incorrect JSX)
+- Dependency conflicts (version mismatches, peer dependencies)
+- Runtime errors (null reference, undefined variables)
+
 ---
 
 ## Git & GitHub Terminology
@@ -532,6 +582,177 @@ graph TD
 | **Vite** | Fast build tool and dev server | Instant hot reload, optimized builds |
 | **Tailwind CSS** | Utility-first CSS framework | No custom CSS, just add classes |
 | **Axios** | HTTP client for API calls | Cleaner than `fetch()` |
+
+### TypeScript vs. JavaScript: Which Should You Use?
+
+**The Short Answer**: TypeScript is JavaScript with type safety. Every TypeScript file is valid JavaScript plus optional type annotations. TypeScript code compiles down to plain JavaScript before running in the browser.
+
+```mermaid
+graph LR
+    JS[JavaScript<br/><i>Dynamic, flexible</i>] --> TS[TypeScript<br/><i>JavaScript + Types</i>]
+    TS --> COMPILE[TypeScript Compiler]
+    COMPILE --> OUTPUT[JavaScript<br/><i>Runs in browser</i>]
+
+    style JS fill:#F7DF1E,color:#000
+    style TS fill:#3178C6,color:#fff
+    style OUTPUT fill:#F7DF1E,color:#000
+```
+
+#### How They Compare
+
+| Aspect | JavaScript | TypeScript |
+|--------|-----------|------------|
+| **Type System** | Dynamic (types checked at runtime) | Static (types checked before code runs) |
+| **Error Detection** | Find errors when code runs | Find errors while writing code |
+| **Learning Curve** | Easier to start | Steeper initial learning curve |
+| **Tooling** | Basic autocomplete | Advanced IntelliSense, refactoring |
+| **Build Step** | No compilation needed | Must compile to JavaScript |
+| **File Extension** | `.js`, `.jsx` | `.ts`, `.tsx` |
+| **Code Verbosity** | Less code to write | More annotations, but clearer intent |
+| **Browser Support** | Runs directly in browsers | Must be compiled first |
+
+#### Pros and Cons
+
+**JavaScript Pros** ✅:
+- No compilation step — write and run immediately
+- Smaller learning curve for beginners
+- More flexible (duck typing, dynamic properties)
+- No type syntax to learn
+- Works everywhere without setup
+- Faster prototyping for small scripts
+
+**JavaScript Cons** ❌:
+- Errors only appear at runtime (crashes in production)
+- Harder to refactor large codebases
+- Limited autocomplete and IntelliSense
+- Typos in property names go unnoticed until runtime
+- Function parameters can be anything (easy to pass wrong types)
+- Difficult to understand code intent without reading implementation
+
+**TypeScript Pros** ✅:
+- Catch errors before code runs (typos, type mismatches, missing properties)
+- Exceptional autocomplete and IntelliSense (Copilot works better with types)
+- Self-documenting code (types describe what functions expect)
+- Safe refactoring (rename variables across hundreds of files)
+- Better for large codebases and teams
+- Prevents entire categories of bugs (null reference errors, undefined is not a function)
+- Easier to onboard new developers (types explain the codebase)
+
+**TypeScript Cons** ❌:
+- Requires build step (compilation adds complexity)
+- More verbose code (type annotations take space)
+- Learning curve (generics, utility types, complex types)
+- Configuration overhead (tsconfig.json)
+- Some libraries lack TypeScript definitions
+- Can feel restrictive when prototyping quickly
+
+#### Example: Same Code in Both Languages
+
+**JavaScript** (runtime error):
+```javascript
+function calculateTotal(price, quantity) {
+  return price * quantity;
+}
+
+// This runs without error until you test it
+calculateTotal("50", 3); // Returns "505050" instead of 150
+// Bug discovered when user complains
+```
+
+**TypeScript** (compile-time error):
+```typescript
+function calculateTotal(price: number, quantity: number): number {
+  return price * quantity;
+}
+
+// TypeScript editor shows red squiggle immediately
+calculateTotal("50", 3);
+// Error: Argument of type 'string' is not assignable to parameter of type 'number'
+// Bug caught before code even runs
+```
+
+#### When to Use JavaScript
+
+Choose **JavaScript** when:
+- Building quick prototypes or proof-of-concepts
+- Writing simple scripts or automation tasks
+- Learning web development for the first time
+- Working on small projects (< 1,000 lines)
+- You need maximum flexibility and speed
+- You're contributing to a JavaScript-only codebase
+- You're writing code that won't be maintained long-term
+
+**Real-world scenarios**:
+- Personal website with a few interactive features
+- Quick data visualization script
+- Browser extension with minimal logic
+- Learning React basics before adding TypeScript complexity
+
+#### When to Use TypeScript
+
+Choose **TypeScript** when:
+- Building production applications
+- Working on team projects (types document code)
+- Creating large codebases (> 1,000 lines)
+- You want GitHub Copilot to generate more accurate code
+- The project will be maintained for years
+- You need safe refactoring capabilities
+- Integrating with APIs (types prevent API contract errors)
+- Building reusable libraries or components
+
+**Real-world scenarios**:
+- SaaS application dashboard
+- E-commerce platform
+- Enterprise business applications
+- Any app that handles user data
+- APIs with complex request/response shapes
+- Design systems and component libraries
+
+#### Deciding Factors
+
+```mermaid
+graph TD
+    START{Starting a new project?} --> SIZE{Project size?}
+    SIZE -->|Small script<br/>< 500 lines| JS[Use JavaScript]
+    SIZE -->|Medium-Large app<br/>> 500 lines| TEAM{Team project?}
+    TEAM -->|Solo| MAINTAIN{Long-term<br/>maintenance?}
+    TEAM -->|Team| TS[Use TypeScript ✅]
+    MAINTAIN -->|Quick prototype| JS
+    MAINTAIN -->|Production app| TS
+
+    style JS fill:#F7DF1E,color:#000
+    style TS fill:#3178C6,color:#fff
+```
+
+**Key Decision Questions**:
+1. **Will this be maintained beyond 6 months?** → TypeScript
+2. **Will more than one person work on it?** → TypeScript
+3. **Does it handle important user data?** → TypeScript
+4. **Is it a learning project or throwaway code?** → JavaScript
+5. **Will you need to refactor often?** → TypeScript
+6. **Do you want better Copilot suggestions?** → TypeScript
+
+#### Migration Path
+
+You can start with JavaScript and migrate to TypeScript incrementally:
+
+1. **Rename** `.js` → `.ts` and `.jsx` → `.tsx` (one file at a time)
+2. **Allow implicit any** in `tsconfig.json` initially
+3. **Add types gradually** as you touch files
+4. **Strict mode later** when comfortable
+
+Many projects use both: TypeScript for application code, JavaScript for build scripts.
+
+#### Why This Lab Uses TypeScript
+
+This lab teaches TypeScript because:
+- **Industry standard** for React in 2026 (most companies use TypeScript)
+- **Better Copilot results** (types give Copilot more context)
+- **Prevents common mistakes** while learning (typos, wrong property names)
+- **Self-documenting code** (easier to follow along)
+- **Real-world preparation** (matches what you'll use professionally)
+
+You can apply the same vibe coding techniques to JavaScript — just remove the type annotations.
 
 ### How a React App Works
 

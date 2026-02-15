@@ -231,6 +231,22 @@ code-insiders --install-extension bradlc.vscode-tailwindcss
 code-insiders --install-extension antfu.vite
 ```
 
+### Step 2.3b: Understanding the Extensions Panel
+
+After installing extensions, let's understand how they're organized:
+
+![VS Code Extensions panel showing installed extensions](images/vscode-extensions-panel.png)
+*VS Code Extensions panel showing LOCAL vs WSL installed extensions and MCP servers*
+
+**Key sections**:
+
+- **LOCAL - INSTALLED** — Extensions running on Windows
+- **WSL: UBUNTU - INSTALLED** — Extensions running in Linux ✅ **Your dev extensions go here**
+- **RECOMMENDED** — VS Code suggests useful extensions based on your project
+- **MCP SERVERS - INSTALLED** — Model Context Protocol servers (more on this in Lab 4)
+
+> **Important**: When connected to WSL (which you should be for development), always install extensions in the "WSL: UBUNTU" section. Extensions in "LOCAL" won't have access to your Linux files and won't work properly for development.
+
 ### Step 2.4: Sign In to GitHub Copilot
 
 Click the **Accounts** icon in the bottom-left of VS Code, then select **Sign in with GitHub to use GitHub Copilot**. Follow the browser prompts.
@@ -471,6 +487,11 @@ MCP: List Servers
 ```
 
 You should see all five servers listed. Start each one by right-clicking and selecting **Start Server**.
+
+Alternatively, you can view installed MCP servers in the Extensions panel:
+
+![MCP servers shown in VS Code Extensions panel](images/vscode-extensions-panel.png)
+*Scroll to the bottom of the Extensions panel to see the "MCP SERVERS - INSTALLED" section showing Azure MCP Server and Context7*
 
 ### Checkpoint
 
@@ -954,6 +975,37 @@ graph TD
 3. **Give specific feedback** — "The button should be blue-500, not blue-700" is better than "fix the button"
 4. **Run your app constantly** — Check the browser after each change
 5. **Commit often** — Small, frequent commits let you roll back safely
+
+### Step 6.6: Troubleshooting Errors with Copilot Chat
+
+When you run `npm run build` or `npm run dev` and encounter errors, Copilot Chat is your debugging assistant. The process is simple:
+
+**The Error-to-Fix Workflow**:
+
+1. **See the error** — Terminal shows red error messages with file paths and line numbers
+2. **Copy the error text** — Select and copy the entire error output (Ctrl+C)
+3. **Open Copilot Chat** — Press `Ctrl+Shift+I` if not already open
+4. **Paste and send** — Just paste the error (Ctrl+V) and press Enter
+5. **Review the fix** — Copilot analyzes your codebase and suggests changes
+6. **Keep or Undo** — Click "Keep" to apply the fix, or "Undo" to try again
+
+![Terminal showing TypeScript build errors](images/typescript-build-errors.png)
+*Example: TypeScript build errors in the terminal — copy this entire output*
+
+![Copilot review interface with Keep and Undo buttons](images/copilot-review-interface.png)
+*Copilot shows exactly what it will change before applying the fix*
+
+**Important**: You don't need to add extra context or explain the error. Copilot already has access to your entire project, custom instructions, and the files involved. Just paste the raw error text.
+
+**Common Errors Copilot Can Fix**:
+- **TypeScript type mismatches** — "Type 'string' is not assignable to type 'number'"
+- **Missing imports** — "Cannot find module 'react'"
+- **Syntax errors** — Missing brackets, incorrect JSX, typos
+- **Build configuration issues** — vite.config.ts problems, tsconfig.json issues
+- **Dependency conflicts** — Version mismatches or missing packages
+- **Runtime errors** — Null references, undefined variables, prop type errors
+
+**Pro Tip**: If Copilot's first suggestion doesn't work, paste the *new* error message and it will iterate toward a solution.
 
 ### Checkpoint
 
