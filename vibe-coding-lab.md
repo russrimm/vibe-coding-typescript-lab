@@ -63,6 +63,12 @@ graph LR
 
 WSL gives you a full Linux terminal inside Windows, which is the standard environment professional developers use for web projects.
 
+### Prerequisites
+
+- Windows 11, or Windows 10 version 2004+ (Build 19041+)
+- Virtualization enabled in BIOS/UEFI
+- Administrator access to Windows Terminal / PowerShell
+
 ### Why WSL?
 
 ```mermaid
@@ -111,10 +117,17 @@ Back in PowerShell:
 wsl --list --verbose
 ```
 
-You should see Ubuntu listed with **VERSION 2**. If it shows version 1, run:
+You should see your distro listed with **VERSION 2**. If it shows version 1, copy the distro name exactly from the output and run:
 
 ```powershell
-wsl --set-version Ubuntu 2
+wsl --set-version <DistroName> 2
+```
+
+Optional health checks:
+
+```powershell
+wsl --status
+wsl --update
 ```
 
 ### Checkpoint
@@ -125,6 +138,34 @@ You should now have:
 [x] Ubuntu installed and running
 [x] A Linux username and password set
 ```
+
+### Optional: Automated Validation (Great for Windows 11 VM Testing)
+
+From the repo root in PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\validate-wsl.ps1 -RunWslUpdate
+```
+
+To install core dev tools and run end-to-end scriptable checks for Labs 1-3 (WSL, VS Code Insiders, Node via nvm, Git, Azure CLI, GitHub CLI):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\validate-wsl.ps1 -InstallDevTools -RunWslUpdate -TestAptUpdate
+```
+
+To also test package index refresh inside Linux:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\validate-wsl.ps1 -RunWslUpdate -TestAptUpdate
+```
+
+Optional: install VS Code extension IDs from Lab 2 in automation mode:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\validate-wsl.ps1 -InstallDevTools -InstallExtensions
+```
+
+Note: interactive sign-ins (`GitHub Copilot`, `az login`, `gh auth login`) and adding SSH keys to GitHub are reported as manual checkpoints because they require browser/UI interaction.
 
 ---
 
@@ -226,7 +267,7 @@ node --version
 npm --version
 ```
 
-Both commands should print version numbers (e.g., `v22.x.x` and `10.x.x`).
+Both commands should print version numbers (e.g., `v24.x.x` and `10.x.x`).
 
 ### Step 3.2: Install Git (Inside WSL)
 
@@ -489,7 +530,7 @@ A modern web application built with Vite, React, TypeScript, and Tailwind CSS.
 This project follows a component-based architecture deployed to Azure Static Web Apps.
 
 ## Tech Stack
-- **Runtime**: Node.js 22 LTS
+- **Runtime**: Node.js 24 LTS
 - **Framework**: React 19 with TypeScript 5.x
 - **Build Tool**: Vite 6.x
 - **Styling**: Tailwind CSS v4
@@ -638,7 +679,7 @@ description: "Azure deployment and infrastructure patterns"
 - Place staticwebapp.config.json in project root
 - Define route fallback to index.html for SPA routing
 - Configure API routes if using Azure Functions backend
-- Set platform.apiRuntime to "node:22" for serverless functions
+- Set platform.apiRuntime to "node:24" for serverless functions
 ```
 
 **`.github/instructions/axios.instructions.md`**:
@@ -980,7 +1021,7 @@ Create `staticwebapp.config.json` in your project root so that client-side routi
     "exclude": ["/assets/*", "/*.svg", "/*.png", "/*.ico"]
   },
   "platform": {
-    "apiRuntime": "node:22"
+    "apiRuntime": "node:24"
   }
 }
 ```
@@ -1358,7 +1399,7 @@ graph TD
     subgraph "Your Development Environment"
         WSL[WSL 2 Ubuntu]
         VSC[VS Code Insiders]
-        NODE[Node.js 22]
+        NODE[Node.js 24]
         GIT[Git + GitHub CLI]
         AZCLI[Azure CLI]
     end

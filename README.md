@@ -40,7 +40,7 @@ Open [vibe-coding-lab.md](./vibe-coding-lab.md) and start with Lab 1.
 
 - **WSL 2** (Windows Subsystem for Linux)
 - **VS Code Insiders**
-- **Node.js 22 LTS** via nvm
+- **Node.js 24 LTS** via nvm
 - **Git** and **GitHub CLI**
 - **GitHub Copilot** + Agent Mode
 - **MCP Servers** (Model Context Protocol)
