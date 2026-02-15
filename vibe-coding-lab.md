@@ -430,7 +430,7 @@ The Microsoft Learn MCP Server is a **remote HTTP server** hosted by Microsoft, 
 /plugin install microsoftdocs/mcp
 ```
 
-> **What it does**: The Microsoft Learn MCP Server connects to `https://learn.microsoft.com/api/mcp` and provides three tools to Copilot:
+> **What it does**: The Microsoft Learn MCP Server connects to `https://learn.microsoft.com/api/mcp` and provides three tools to GitHub Copilot:
 > - `microsoft_docs_search` — Search Microsoft documentation
 > - `microsoft_docs_fetch` — Fetch complete documentation articles
 > - `microsoft_code_sample_search` — Find official Microsoft code samples
@@ -989,7 +989,7 @@ Try this as your first prompt:
 
 > Build me a dashboard page with a header showing "My Vibe App", a sidebar navigation with links to Home, About, and Settings pages, and a main content area that displays a welcome card with today's date. Use Tailwind CSS for all styling. Make it responsive — sidebar should collapse to a hamburger menu on mobile.
 
-Watch as Copilot:
+Watch as GitHub Copilot:
 - Reads your `.github/copilot-instructions.md` for context
 - Creates multiple component files following your TypeScript standards
 - Applies Tailwind classes matching your styling conventions
@@ -1054,7 +1054,284 @@ When you run `npm run build` or `npm run dev` and encounter errors, Copilot Chat
 - **Dependency conflicts** — Version mismatches or missing packages
 - **Runtime errors** — Null references, undefined variables, prop type errors
 
-**Pro Tip**: If Copilot's first suggestion doesn't work, paste the *new* error message and it will iterate toward a solution.
+**Pro Tip**: If GitHub Copilot's first suggestion doesn't work, paste the *new* error message and it will iterate toward a solution.
+
+### Step 6.7: Browser DevTools for Runtime Troubleshooting
+
+Build errors happen in the terminal, but **runtime errors** happen in the browser. Microsoft Edge and Google Chrome have built-in Developer Tools (DevTools) that help you debug your running application.
+
+**Opening DevTools**:
+- **Windows**: Press `F12` or `Ctrl+Shift+I`
+- **Alternative**: Right-click anywhere on your page → **Inspect**
+
+#### The DevTools Panel Layout
+
+```mermaid
+graph TD
+    DT[Browser DevTools] --> CONS[Console Tab<br/><i>JavaScript errors & logs</i>]
+    DT --> NET[Network Tab<br/><i>API calls & responses</i>]
+    DT --> ELEM[Elements Tab<br/><i>HTML/CSS inspection</i>]
+    DT --> APP[Application Tab<br/><i>Storage & cache</i>]
+    DT --> PERF[Performance Tab<br/><i>Speed & bottlenecks</i>]
+
+    style CONS fill:#E74C3C,color:#fff
+    style NET fill:#3498DB,color:#fff
+    style ELEM fill:#2ECC71,color:#fff
+```
+
+#### Console Tab — Your First Stop for Errors
+
+The **Console** shows JavaScript errors, warnings, and `console.log()` output from your code.
+
+**What you'll see**:
+- **Red errors** — JavaScript exceptions, null references, undefined variables
+- **Yellow warnings** — Deprecation notices, potential issues
+- **Blue info** — `console.log()` messages from your code
+- **Stack traces** — Line numbers and file paths where errors occurred
+
+**How to use it**:
+
+1. Open your app in Edge/Chrome: `http://localhost:5173`
+2. Press `F12` to open DevTools
+3. Click the **Console** tab
+4. Interact with your app (click buttons, fill forms, navigate)
+5. Watch for red error messages
+
+**Common Console Errors**:
+
+| Error Message | What It Means | How to Fix |
+|---------------|---------------|------------|
+| `Uncaught TypeError: Cannot read property 'X' of undefined` | You're accessing a property on an object that doesn't exist | Add null checks: `obj?.property` or `if (obj) { ... }` |
+| `Uncaught ReferenceError: X is not defined` | Variable or function doesn't exist in scope | Check spelling, ensure import statements, verify variable declaration |
+| `React Hook useEffect has a missing dependency` | useEffect needs to include all variables it uses | Add missing dependencies to the dependency array |
+| `Failed to fetch` | API call failed (network error, CORS, wrong URL) | Check Network tab, verify API endpoint, check CORS headers |
+| `404 (Not Found)` | Trying to load a file/resource that doesn't exist | Verify file path, check public folder for assets |
+
+**Copying Console Errors to GitHub Copilot**:
+
+When you see a red error in the Console:
+1. **Right-click the error** → **Copy message**
+2. **Open GitHub Copilot Chat** (`Ctrl+Shift+I` in VS Code)
+3. **Paste the error** and press Enter
+4. GitHub Copilot will suggest a fix based on your project context
+
+**Pro Tip**: You can also run JavaScript directly in the Console to test code snippets. Type `console.log("Hello")` and press Enter — it executes immediately.
+
+#### Network Tab — Debugging API Calls
+
+The **Network** tab shows every HTTP request your app makes: API calls, image loads, font downloads, etc.
+
+**When to use it**:
+- API endpoints returning errors (404, 500, 401)
+- Verifying request/response payloads
+- Checking API response times
+- Debugging CORS issues
+- Confirming headers are sent correctly
+
+**How to use it**:
+
+1. Open DevTools (`F12`) → **Network** tab
+2. **Reload your page** (`Ctrl+R`) to capture all requests
+3. Interact with your app (trigger API calls)
+4. Click any request to see details
+
+**Network Request Details**:
+
+When you click a request, you'll see tabs:
+- **Headers** — Request method (GET/POST), URL, status code, request/response headers
+- **Preview** — Formatted view of the response (JSON, HTML, etc.)
+- **Response** — Raw response body
+- **Timing** — How long each phase took (DNS lookup, connection, download)
+
+**Common Network Issues**:
+
+| Status Code | What It Means | How to Fix |
+|-------------|---------------|------------|
+| **200 OK** | Success — request worked | No fix needed ✅ |
+| **404 Not Found** | API endpoint doesn't exist | Verify URL, check API documentation, confirm route exists |
+| **401 Unauthorized** | Missing or invalid authentication | Add auth headers, check token expiration, verify API key |
+| **403 Forbidden** | You don't have permission | Check user permissions, verify role-based access |
+| **500 Internal Server Error** | Backend crashed | Check backend logs, verify request payload format |
+| **CORS error** | Cross-Origin Resource Sharing blocked | Add CORS headers on backend, use proxy in development |
+
+**Inspecting API Responses**:
+
+1. Trigger an API call in your app (e.g., click "Load Posts")
+2. Find the request in Network tab (look for `/posts`, `/api/users`, etc.)
+3. Click the request → **Preview** tab
+4. Verify the response data matches what you expect
+
+**Example**: If your app should display 10 posts but shows nothing:
+- Check Network tab for the API call
+- Click the request → Preview
+- Verify the response contains an array with 10 items
+- If empty or error, the API is the issue (not your React code)
+
+**Filtering Requests**:
+- Click **Fetch/XHR** to show only API calls (hides images, CSS, fonts)
+- Use the search box to filter by name (e.g., type "posts" to find `/api/posts`)
+
+**Copying Network Errors to GitHub Copilot**:
+
+When an API call fails:
+1. Click the failed request in Network tab
+2. Right-click the **Response** tab → Copy
+3. Open GitHub Copilot Chat in VS Code
+4. Paste and add context: "This API call is failing with this response: [paste]"
+
+#### Elements Tab — Inspecting HTML and CSS
+
+The **Elements** tab shows your app's live HTML structure and applied CSS styles.
+
+**When to use it**:
+- Element not positioned correctly
+- CSS styles not applying
+- Tailwind classes not working as expected
+- Hover/active states not triggering
+- Responsive breakpoints not switching
+
+**How to use it**:
+
+1. Open DevTools (`F12`) → **Elements** tab
+2. Click the **element picker icon** (top-left of DevTools)
+3. Hover over any element on your page
+4. Click the element to inspect it
+5. See HTML structure (left panel) and CSS styles (right panel)
+
+**What you'll see**:
+- **Left panel** — Full DOM tree (HTML structure)
+- **Right panel** — All CSS rules applied to the selected element
+- **Computed** — Final computed styles after all CSS rules are combined
+- **Box Model** — Margins, borders, padding, content dimensions
+
+**Debugging Tailwind CSS**:
+
+If Tailwind classes aren't working:
+1. Inspect the element with DevTools
+2. Check the **Styles** panel on the right
+3. Look for your Tailwind classes (e.g., `bg-blue-500`, `text-lg`)
+4. If they're crossed out, another style is overriding them
+5. If they're missing entirely, Tailwind isn't loading or the class doesn't exist
+
+**Common CSS Issues**:
+
+| Problem | Diagnosis | Fix |
+|---------|-----------|-----|
+| Element invisible | Check `display: none`, `opacity: 0`, `visibility: hidden` | Remove hiding styles or add conditional rendering |
+| Element positioned wrong | Check `position`, `top`, `left`, `right`, `bottom` | Adjust positioning styles or use flexbox/grid |
+| Tailwind class not applying | Class not in Styles panel | Verify Tailwind is configured, check for typos |
+| Responsive not working | Styles apply at wrong breakpoint | Check Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:` |
+| Hover state stuck | `:hover` styles remain after mouse moves away | Check for JavaScript setting classes, clear state |
+
+**Live Editing CSS**:
+
+You can edit styles directly in DevTools to experiment:
+1. Inspect an element
+2. Click in the **Styles** panel
+3. Add/modify CSS properties
+4. See changes immediately in the browser
+5. Copy working styles back to your code
+
+**Pro Tip**: Changes in DevTools are temporary — refresh the page and they're gone. Once you find the right styles, copy them back to your `.tsx` or `.css` files.
+
+#### Application Tab — Storage and Cache
+
+The **Application** tab shows browser storage: LocalStorage, SessionStorage, Cookies, IndexedDB, and Cache.
+
+**When to use it**:
+- Debugging persisted user preferences (dark mode toggle)
+- Checking if auth tokens are stored correctly
+- Clearing cached data to force fresh loads
+- Verifying localStorage saves properly
+
+**How to use it**:
+
+1. Open DevTools (`F12`) → **Application** tab
+2. Expand **Local Storage** → `http://localhost:5173`
+3. See all key-value pairs stored by your app
+4. Right-click → **Clear** to delete all stored data
+
+**Common Storage Issues**:
+
+| Problem | Diagnosis | Fix |
+|---------|-----------|-----|
+| Dark mode toggle doesn't persist | Check LocalStorage for saved preference | Verify `localStorage.setItem()` is called on toggle |
+| Auth token missing | Check LocalStorage or Cookies for token | Ensure token is saved after login |
+| Stale data after update | Old cache serving outdated content | Clear Application → Cache Storage, hard refresh (`Ctrl+Shift+R`) |
+
+#### Performance Tab — Finding Slow Code
+
+The **Performance** tab records your app's runtime performance to find bottlenecks.
+
+**When to use it**:
+- Page loads slowly
+- UI freezes or lags during interactions
+- Animations are choppy
+- Investigating why re-renders are slow
+
+**How to use it**:
+
+1. Open DevTools (`F12`) → **Performance** tab
+2. Click **Record** (circle icon)
+3. Interact with your app (the slow action)
+4. Click **Stop**
+5. Analyze the flame graph to find slow functions
+
+**Pro Tip**: For most vibe coding projects, you won't need Performance profiling unless your app feels noticeably slow.
+
+---
+
+### DevTools Workflow Summary
+
+```mermaid
+graph TD
+    START[App has an issue] --> TYPE{What type?}
+
+    TYPE -->|JavaScript error<br/>Function not working| CONSOLE[Console Tab<br/>Check red errors]
+    TYPE -->|API not returning data<br/>404/500 errors| NETWORK[Network Tab<br/>Inspect requests]
+    TYPE -->|Styling broken<br/>Layout issues| ELEMENTS[Elements Tab<br/>Inspect CSS]
+    TYPE -->|LocalStorage issues<br/>Cached data| APP[Application Tab<br/>Check storage]
+
+    CONSOLE --> COPY1[Copy error message]
+    NETWORK --> COPY2[Copy response/headers]
+    ELEMENTS --> COPY3[Note CSS issue]
+    APP --> COPY4[Check stored values]
+
+    COPY1 --> COPILOT[Paste into<br/>GitHub Copilot Chat]
+    COPY2 --> COPILOT
+    COPY3 --> COPILOT
+    COPY4 --> COPILOT
+
+    COPILOT --> FIX[Get suggested fix]
+    FIX --> TEST[Test in browser]
+    TEST --> WORKS{Fixed?}
+    WORKS -->|No| START
+    WORKS -->|Yes| DONE[✅ Ship it]
+
+    style CONSOLE fill:#E74C3C,color:#fff
+    style NETWORK fill:#3498DB,color:#fff
+    style ELEMENTS fill:#2ECC71,color:#fff
+    style COPILOT fill:#6e40c9,color:#fff
+    style DONE fill:#27AE60,color:#fff
+```
+
+**The Complete Debugging Loop**:
+
+1. **Build error in terminal** → Copy → Paste into GitHub Copilot Chat
+2. **Runtime error in browser** → F12 → Console tab → Copy error → Paste into GitHub Copilot Chat
+3. **API issue** → F12 → Network tab → Inspect response → Copy to GitHub Copilot Chat
+4. **Styling issue** → F12 → Elements tab → Identify CSS problem → Describe to GitHub Copilot Chat
+5. **GitHub Copilot suggests fix** → Review → Keep or Undo → Test in browser
+
+**Keyboard Shortcuts Reference**:
+
+| Action | Windows Shortcut |
+|--------|------------------|
+| Open DevTools | `F12` or `Ctrl+Shift+I` |
+| Open DevTools (Console) | `Ctrl+Shift+J` |
+| Inspect element | `Ctrl+Shift+C` |
+| Hard refresh (clear cache) | `Ctrl+Shift+R` or `Ctrl+F5` |
+| Toggle device mode (mobile preview) | `Ctrl+Shift+M` |
 
 ### Checkpoint
 

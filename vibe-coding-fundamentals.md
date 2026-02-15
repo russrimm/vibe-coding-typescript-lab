@@ -58,32 +58,228 @@ graph LR
 
 ## Core Concepts
 
-### Agent Mode vs. Chat Mode
+### GitHub Copilot Modes
 
-GitHub Copilot has two primary interaction modes:
+GitHub Copilot offers four distinct interaction modes, each designed for different workflows. You can switch between modes using the dropdown at the top of the Copilot Chat panel.
 
 ```mermaid
 graph TD
     COPILOT[GitHub Copilot]
-    COPILOT --> CHAT[Chat Mode]
+    COPILOT --> ASK[Ask Mode]
     COPILOT --> AGENT[Agent Mode]
+    COPILOT --> BEAST[Beast Mode]
+    COPILOT --> PLAN[Plan Mode]
 
-    CHAT --> C1[Answer questions]
-    CHAT --> C2[Explain code]
-    CHAT --> C3[Suggest fixes]
-    CHAT --> C4[Generate snippets]
+    ASK --> A1[Answer questions]
+    ASK --> A2[Explain code]
+    ASK --> A3[Generate snippets]
+    ASK --> A4[Provide guidance]
 
-    AGENT --> A1[Edit multiple files]
-    AGENT --> A2[Run terminal commands]
-    AGENT --> A3[Create full features]
-    AGENT --> A4[Fix errors automatically]
+    AGENT --> B1[Edit multiple files]
+    AGENT --> B2[Run terminal commands]
+    AGENT --> B3[Create full features]
+    AGENT --> B4[Fix errors automatically]
 
-    style CHAT fill:#4A90D9,color:#fff
+    BEAST --> C1[Like Agent but faster]
+    BEAST --> C2[Lower quality checks]
+    BEAST --> C3[Quick prototyping]
+    BEAST --> C4[Rapid iteration]
+
+    PLAN --> D1[Create implementation plan]
+    PLAN --> D2[Break down tasks]
+    PLAN --> D3[Get user approval]
+    PLAN --> D4[Then execute plan]
+
+    style ASK fill:#4A90D9,color:#fff
     style AGENT fill:#2ECC71,color:#fff
+    style BEAST fill:#E74C3C,color:#fff
+    style PLAN fill:#F39C12,color:#fff
 ```
 
-**Chat Mode**: Ask questions, get code snippets, receive explanations
-**Agent Mode**: Describe a feature, Copilot autonomously implements it across files
+#### Ask Mode (Conversational)
+
+**Purpose**: Get information, explanations, and suggestions without making changes to your codebase.
+
+**When to use**:
+- Understanding how code works
+- Learning new concepts or APIs
+- Getting suggestions for approaches
+- Debugging logic without changing files
+- Exploring options before committing to changes
+
+**What it does**:
+- Answers questions in natural language
+- Explains code, error messages, and documentation
+- Suggests code snippets you can manually copy
+- Provides examples and best practices
+- Recommends tools, libraries, or patterns
+
+**What it DOESN'T do**:
+- Edit your files
+- Run terminal commands
+- Make changes to your project
+
+**Example prompts**:
+- "Explain how async/await works in TypeScript"
+- "What's the difference between useState and useReducer?"
+- "How should I structure my API service layer?"
+- "What does this error message mean?"
+
+**Keyboard shortcut**: `Ctrl+Shift+I` (opens Copilot Chat in Ask mode by default)
+
+#### Agent Mode (Autonomous Multi-File Editing)
+
+**Purpose**: Autonomously implement features, fix bugs, and make changes across multiple files in your project.
+
+**When to use**:
+- Building new features end-to-end
+- Refactoring code across multiple files
+- Implementing tests for existing code
+- Fixing bugs that span multiple files
+- Adding new components or modules
+
+**What it does**:
+- Reads your entire project structure
+- Edits multiple files simultaneously
+- Runs terminal commands (build, test, install packages)
+- Creates new files and folders
+- Follows your custom instructions (`.github/copilot-instructions.md`)
+- Shows proposed changes before applying them (Keep/Undo buttons)
+
+**What it requires**:
+- Clear, specific instructions
+- Existing project context (files, structure)
+- Your approval before applying changes
+
+**Example prompts**:
+- "Add a user authentication feature with login, signup, and logout"
+- "Create a dashboard component with charts showing user analytics"
+- "Add unit tests for all components in the src/components folder"
+- "Refactor the API service to use Axios interceptors for auth headers"
+
+**Keyboard shortcut**: Switch to Agent mode in Copilot Chat dropdown
+
+**Review workflow**: GitHub Copilot Agent shows a diff view with **Keep** and **Undo** buttons before applying changes, giving you full control over what gets merged into your codebase.
+
+#### Beast Mode (Fast Prototyping)
+
+**Purpose**: Rapid development with fewer safety checks—trades code quality for speed. Think of it as "Agent Mode with training wheels off."
+
+**When to use**:
+- Quick prototypes or proof-of-concepts
+- Throwaway experiments
+- Rapid iteration when exploring ideas
+- Time-sensitive hackathons or demos
+- You'll review and refactor the code later
+
+**What it does**:
+- Everything Agent Mode does, but faster
+- Skips some validation and quality checks
+- Makes more assumptions about your intent
+- Generates code with less deliberation
+- May produce working but less polished code
+
+**What it trades off**:
+- Code quality (may have inconsistencies)
+- Error handling (less robust)
+- Best practices (shortcuts taken)
+- Documentation (fewer comments)
+- Type safety (looser typing)
+
+**When NOT to use**:
+- Production code
+- Team projects (code quality matters)
+- Critical features (authentication, payments, data handling)
+- Long-term maintained projects
+
+**Example prompts**:
+- "Build a quick dashboard to visualize this JSON data"
+- "Prototype a drag-and-drop file uploader"
+- "Mock up a pricing calculator with sliders"
+- "Create a demo app showing real-time WebSocket updates"
+
+**Important**: Beast Mode code often needs cleanup before production. Use it to move fast, then switch to Agent Mode to refine.
+
+#### Plan Mode (Think Before You Code)
+
+**Purpose**: Create a detailed implementation plan and get your approval before GitHub Copilot writes any code.
+
+**When to use**:
+- Complex features with multiple moving parts
+- Large refactors affecting many files
+- Projects where you want to understand the approach first
+- Learning how to implement something (see the plan, understand the steps)
+- Working on unfamiliar codebases (review strategy before changes)
+
+**What it does**:
+- Analyzes your request and project structure
+- Creates a step-by-step implementation plan
+- Lists which files will be created/modified
+- Explains the architectural decisions
+- Waits for your approval or feedback
+- Executes the plan only after you confirm
+
+**Workflow**:
+1. You describe what you want to build
+2. GitHub Copilot generates a detailed plan
+3. You review the plan (file changes, approach, steps)
+4. You approve, request changes, or reject
+5. GitHub Copilot executes the approved plan
+
+**What it requires**:
+- More time upfront (planning phase)
+- Your engagement (review and approval)
+- Clear requirements in your initial request
+
+**Example prompts**:
+- "Plan an implementation for user role-based access control"
+- "Create a plan to migrate from REST API to GraphQL"
+- "Plan how to add i18n (internationalization) to this React app"
+- "Show me a plan for adding Redis caching to the API layer"
+
+**Benefits**:
+- Understand the approach before code is written
+- Catch architectural issues early
+- Learn implementation patterns
+- Avoid costly rewrites
+- Better for team collaboration (share the plan first)
+
+**Keyboard shortcut**: Switch to Plan mode in Copilot Chat dropdown
+
+---
+
+### Choosing the Right Mode
+
+```mermaid
+graph TD
+    START{What do you need?} --> LEARN{Learning or<br/>asking questions?}
+    LEARN -->|Yes| ASK[Use Ask Mode]
+    LEARN -->|No| CHANGE{Making changes<br/>to codebase?}
+
+    CHANGE -->|No| ASK
+    CHANGE -->|Yes| COMPLEX{Complex feature<br/>or unfamiliar?}
+
+    COMPLEX -->|Yes, want to<br/>review plan first| PLAN[Use Plan Mode]
+    COMPLEX -->|Yes, but trust<br/>GitHub Copilot| AGENT_OR_BEAST{Need speed<br/>or quality?}
+
+    COMPLEX -->|No, simple task| AGENT_OR_BEAST
+
+    AGENT_OR_BEAST -->|Quality matters<br/>Production code| AGENT[Use Agent Mode]
+    AGENT_OR_BEAST -->|Speed matters<br/>Prototype/demo| BEAST[Use Beast Mode]
+
+    style ASK fill:#4A90D9,color:#fff
+    style AGENT fill:#2ECC71,color:#fff
+    style BEAST fill:#E74C3C,color:#fff
+    style PLAN fill:#F39C12,color:#fff
+```
+
+**Quick Reference**:
+- **Ask Mode** → "Teach me" or "Explain this"
+- **Agent Mode** → "Build this feature properly"
+- **Beast Mode** → "Build this prototype fast"
+- **Plan Mode** → "Show me how you'd build this, then we'll decide"
+
+**Pro Tip**: Start with **Plan Mode** for new features you're unfamiliar with. Review the plan, learn the approach, then execute. Once you understand the pattern, use **Agent Mode** for similar features.
 
 ### The Development Loop
 
@@ -201,7 +397,7 @@ graph TD
 
 ### Custom Instructions Hierarchy
 
-Copilot reads instructions in this priority order:
+GitHub Copilot reads instructions in this priority order:
 
 ```mermaid
 graph TD
@@ -232,9 +428,9 @@ graph LR
     style COPILOT fill:#6e40c9,color:#fff
 ```
 
-Think of MCP servers as Copilot's "tools":
-- Without MCP: Copilot only knows what you type and what it was trained on
-- With MCP: Copilot can fetch live docs, manage Azure resources, read your GitHub repos, etc.
+Think of MCP servers as GitHub Copilot's "tools":
+- Without MCP: GitHub Copilot only knows what you type and what it was trained on
+- With MCP: GitHub Copilot can fetch live docs, manage Azure resources, read your GitHub repos, etc.
 
 ### Troubleshooting Errors with Copilot Chat
 

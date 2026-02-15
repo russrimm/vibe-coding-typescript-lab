@@ -29,7 +29,7 @@ By the end of this tutorial, you'll have a fully deployed web app running on Mic
 
 [PAUSE]
 
-Now, this isn't magic. You'll still need to understand what's happening. You'll read the code, test it, and guide the AI — think of yourself as the architect, and Copilot as your junior developer. But instead of memorizing syntax and fighting with Stack Overflow, you'll be building and shipping real apps.
+Now, this isn't magic. You'll still need to understand what's happening. You'll read the code, test it, and guide the AI — think of yourself as the architect, and GitHub Copilot as your junior developer. But instead of memorizing syntax and fighting with Stack Overflow, you'll be building and shipping real apps.
 
 [VISUAL: Show final deployed app running on Azure]
 
@@ -49,7 +49,7 @@ Lab four: Configuring five MCP servers — these are like plugins that superchar
 
 Lab five: This is where it gets really good. We'll customize Copilot with instruction files that teach it your project's conventions and patterns.
 
-Lab six: Vibe coding your first project — describing features in plain English and watching Copilot build them.
+Lab six: Vibe coding your first project — describing features in plain English and watching GitHub Copilot build them.
 
 Lab seven: Deploying to Azure Static Web Apps so your app is live on the internet.
 
@@ -331,7 +331,7 @@ Now, scroll down to the bottom. See that "MCP SERVERS - INSTALLED" section?
 
 [VISUAL: Zoom in on the MCP SERVERS section showing Azure MCP Server and Context7]
 
-These are the Model Context Protocol servers we'll install in Lab Four. Azure MCP Server gives Copilot access to your Azure cloud resources. Context7 lets Copilot fetch the latest documentation for any programming library.
+These are the Model Context Protocol servers we'll install in Lab Four. Azure MCP Server gives GitHub Copilot access to your Azure cloud resources. Context7 lets GitHub Copilot fetch the latest documentation for any programming library.
 
 You can click the gear icon next to each one to configure settings or verify they're running.
 
@@ -345,7 +345,7 @@ Alright, so now you understand how the Extensions panel works, how to tell where
 
 ### Step 2.4: Signing Into GitHub Copilot
 
-Extensions installed? Great. Now let's activate Copilot. Look in the bottom-left corner of VS Code — you'll see a little account icon. Click it.
+Extensions installed? Great. Now let's activate GitHub Copilot. Look in the bottom-left corner of VS Code — you'll see a little account icon. Click it.
 
 [VISUAL: Show account icon location]
 
@@ -649,7 +649,7 @@ That's it. No explanation needed. No extra context. Just paste the raw error tex
 
 [VISUAL: **INSERT SCREENSHOT - copilot-review-interface.png**]
 
-Copilot analyzes your entire project. It reads your custom instructions, looks at the files involved in the error, understands your TypeScript config, and figures out what's wrong.
+GitHub Copilot analyzes your entire project. It reads your custom instructions, looks at the files involved in the error, understands your TypeScript config, and figures out what's wrong.
 
 [PAUSE]
 
@@ -661,7 +661,7 @@ This is important — Copilot doesn't just apply the fix automatically. It shows
 
 ### Common Errors Copilot Handles
 
-Here are the types of errors Copilot can fix for you:
+Here are the types of errors GitHub Copilot can fix for you:
 
 **TypeScript type errors** — like "Type string is not assignable to type number." Copilot will fix the type annotations.
 
